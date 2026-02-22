@@ -1,11 +1,9 @@
 library(readr)
-
-install.packages('EnvStats')
 library(EnvStats)
 library(nortest)
 
 # set working directory (relative path)
-setwd("~/Courses/Data Analytics/Spring26/labs/lab 1/")
+#setwd("~/Courses/Data Analytics/Spring26/labs/lab 1/")
 
 # read data
 epi.data <- read_csv("epi_results_2024_pop_gdp.csv")
@@ -14,19 +12,19 @@ epi.data <- read_csv("epi_results_2024_pop_gdp.csv")
 View(epi.data)
 
 # print vlues in variable
-epi.data$EPI.new
+epi.data$gdp
 
 # print summary of variable
-summary(epi.data$EPI.new)
+summary(epi.data$gdp)
 
 
 ### Explore Variable ###
 
 ## take a copy of a variable from a dataframe into a separate variable
-EPI <- epi.data$EPI.new
+GDP <- epi.data$gdp
 
 # find NAs in variable: function outputs vector of logical values, true if NA, false otherwise
-NAs <- is.na(EPI)
+NAs <- is.na(GDP)
 
 # print
 NAs
@@ -35,62 +33,61 @@ NAs
 rownums <- which(NAs)
 
 # print rows with NAs
-EPI[rownums]
+GDP[rownums]
+
+GDP.complete <- GDP[!NAs]
 
 ## create copy of new variable
 
-MHP <- epi.data$MHP.new
+POP <- epi.data$population
 
 # print values in variable
-MHP
+POP
 
 # find NAs inv variavle - outputs vector of logical values, true if NA, false otherwise
-NAs <- is.na(MHP)
+NAs <- is.na(POP)
 
 rownums <- which(NAs)
 
 # print NAs
-MHP[rownums]
+POP[rownums]
 
 # take subset of NOT NAs from variable
-MHP.complete <- MHP[!NAs]
+POP.complete <- POP[!NAs]
 
-MHP.complete
+POP.complete
 
-# filter for only values above 30 and assign result to new variable
-MHP.above30 <- MHP.complete[MHP.complete>30]
-
-MHP.above30
   
 # stats
-summary(MHP.above30)
+summary(POP.complete)
 
 # boxplot of variable(s)
-boxplot(EPI, MHP.above30, names = c("EPI","MHP>30"))
+boxplot(GDP.complete, names = c("GDP"))
+boxplot( POP.complete, names = c("POP"))
 
 
 ### Histograms ###
 
 # histogram (frequency distribution)
-hist(EPI)
+hist(GDP)
 
 # define sequence of values over which to plot histogram
 x <- seq(20., 80., 5)
   
 # histogram (frequency distribution) over specified range
-hist(EPI, x, prob=TRUE)
+hist(GDP, x, prob=TRUE)
 
 # print estimated density curve for variable
-lines(density(EPI,bw="SJ")) # or try bw=“SJ”
+lines(density(GDP,bw="SJ")) # or try bw=“SJ”
 
 # print rug under histogram
-rug(EPI)
+rug(GDP)
 
 
 ## plot  histogram again
 
 # histogram (frequency distribution) over range
-hist(EPI, x, prob=TRUE) 
+hist(GDP, x, prob=TRUE) 
 
 # range of values
 x1<-seq(20,80,1)
@@ -105,15 +102,15 @@ lines(x1,d1)
 ### Empirical Cumulative Distribution Function ###
 
 # plot ecdfs
-plot(ecdf(EPI), do.points=FALSE, verticals=TRUE) 
+plot(ecdf(GDP), do.points=FALSE, verticals=TRUE) 
 
-plot(ecdf(MHP), do.points=FALSE, verticals=TRUE) 
+plot(ecdf(POP), do.points=FALSE, verticals=TRUE) 
 
 
 ### Quantile-quantile Plots ###
 
 # print quantile-quantile plot for variable with theoretical normal distribuion
-qqnorm(EPI); qqline(EPI)
+qqnorm(GDP); qqline(GDP)
 
 
 # print quantile-quantile plot for random numbers from a normal distribution with theoretical normal distribution
@@ -126,10 +123,8 @@ qqnorm(x); qqline(x)
 
 # print quantile-quantile plot of two variables
 
-qqplot(EPI, MHP, xlab = "Q-Q plot for EPI & MHP") 
+qqplot(GDP, POP, xlab = "Q-Q plot for GDP & POP") 
 
-# print quantile-quantile plot for 2 variables
-qqplot(epi.data$EPI.new, epi.data$ECO.new, xlab = "Q-Q plot for EPI.new & EPI.old") 
 
 
 ## Statistical Tests
@@ -158,3 +153,4 @@ hist(y, col='lightgreen', add=TRUE)
 
 
 ### THE END ###
+
