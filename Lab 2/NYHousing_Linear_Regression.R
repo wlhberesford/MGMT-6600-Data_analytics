@@ -4,7 +4,7 @@ library("readr")
 
 
 ## read dataset
-NY_House_Dataset <- read_csv("C:/Users/Liam/Dropbox/Masters/Data Analytics/MGMT-6600-Data_analytics/Lab 2/NY-House-Dataset.csv")
+NY_House_Dataset <- read_csv("./NY-House-Dataset.csv")
 
 dataset <- NY_House_Dataset
 
@@ -16,35 +16,43 @@ ggplot(dataset, aes(x = log10(PROPERTYSQFT), y = log10(PRICE))) +
   geom_point()
 
 
+
 ## filter data
 dataset <- dataset[dataset$PRICE<195000000,]
+
 
 ## column names
 names(dataset)
 
+## ----- Price ~ PROPERTYSQFT ----- ##
 ## fit linear model
-lmod0 <- lm(PRICE~PROPERTYSQFT, data = dataset)
+lmod01 <- lm(PRICE~PROPERTYSQFT, data = dataset)
 
 ## print model output
-summary(lmod0)
+summary(lmod01)
 
 ## scatter plot of 2 variables
 plot(PRICE~PROPERTYSQFT, data = dataset)
-abline(lmod0)
+abline(lmod01)
 
 ## better scatter plot of 2 variables with best fit line
 ggplot(dataset, aes(x = PROPERTYSQFT, y = PRICE)) +
   geom_point() +
   stat_smooth(method = "lm", col="red")
 
-lmod1 <- lm(log10(PRICE)~log10(PROPERTYSQFT), data = dataset)
+## residual scatter plot
+ggplot(lmod01, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+
+lmod11 <- lm(log10(PRICE)~log10(PROPERTYSQFT), data = dataset)
 
 ## print model output
-summary(lmod1)
+summary(lmod11)
 
 ## scatter plot of 2 variables with best fit line
 plot(log10(PRICE)~log10(PROPERTYSQFT), data = dataset)
-abline(lmod1)
+abline(lmod11)
 
 ## better scatter plot of 2 variables with best fit line
 
@@ -53,31 +61,43 @@ ggplot(dataset, aes(x = log10(PROPERTYSQFT), y = log10(PRICE))) +
   stat_smooth(method = "lm", col="red")
 
 
-ggplot(lmod1, aes(x = .fitted, y = .resid)) +
+ggplot(lmod11, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+
+## ----- Price ~ BEDS + BATHS ----- ##
+## fit linear model
+lmod02 <- lm(PRICE~BEDS+BATH, data = dataset)
+
+## print model output
+summary(lmod02)
+plot(PRICE ~ BATH, data = dataset)
+
+## residual scatter plot
+ggplot(lmod02, aes(x = .fitted, y = .resid)) +
   geom_point() +
   geom_hline(yintercept = 0)
 
 
-## filter data
 
-dataset <- dataset[dataset$PROPERTYSQFT!=2184.207862,]
+## ----- Price ~ PROPERTYSQFT + BATH + BEDS + (BATH * BEDS) ----- ##
 
+dataset_log_friendly <- dataset[dataset$BATH>0,]
 
-lmod2 <- lm(log10(PRICE)~log10(PROPERTYSQFT), data = dataset)
+## fit linear model
+lmod03 <- lm(PRICE~PROPERTYSQFT + BATH + BEDS + (BATH * BEDS), data = dataset)
 
 ## print model output
-summary(lmod2)
+summary(lmod03)
 
-## scatter plot of 2 variables with best fit line
-plot(log10(PRICE)~log10(PROPERTYSQFT), data = dataset)
-abline(lmod2)
+## scatter plot of 2 variables
+plot(PRICE~(BATH*BEDS), data = dataset)
+abline(lmod03)
 
-## better scatter plot of 2 variables with best fit line
-ggplot(dataset, aes(x = log10(PROPERTYSQFT), y = log10(PRICE))) +
+## residual scatter plot
+ggplot(lmod03, aes(x = .fitted, y = .resid)) +
   geom_point() +
-  stat_smooth(method = "lm", col="red")
-
-
+  geom_hline(yintercept = 0)
 
 ### THE END ###
 
